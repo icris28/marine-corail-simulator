@@ -1,0 +1,140 @@
+window.SOLIX_DATA = {
+  config: {
+    acUsableEnergyFactor: 0.90,
+    dcUsableEnergyFactor: 0.94,
+    startupSafetyFactor: 1.10,
+    lowRuntimeHours: 3,
+    comfortableRuntimeHours: 24,
+    solarConditions: {
+      excellent: { label: "Excellentes", productionFactor: 0.88, equivalentSunHours: 5.2 },
+      good: { label: "Bonnes", productionFactor: 0.78, equivalentSunHours: 4.3 },
+      average: { label: "Moyennes", productionFactor: 0.62, equivalentSunHours: 3.0 }
+    }
+  },
+
+  stations: [
+    {
+      id: "c300",
+      name: "Anker SOLIX C300",
+      shortName: "C300",
+      capacityWh: 288,
+      image: "assets/images/anker-solix-c300.webp",
+      useCase: "Bivouac, électronique légère et petites recharges",
+      continuousW: 300,
+      peakW: 600,
+      motorStartupLimitW: 300,
+      peakLabel: "600 W via SurgePad",
+      chemistry: "LFP",
+      extension: null,
+      solar: { maxW: 100, minV: 11, maxV: 28, lowVoltageCurrentA: 8.2, highVoltageCurrentA: null },
+      recharge: {
+        ac: { supported: true, fullMinutesEstimate: 70, manufacturerNote: "80 % en 50 min sur secteur" },
+        alternator: { supported: false },
+        car: { supported: true, inputW: 100, efficiency: 0.82, manufacturerNote: "Recharge véhicule compatible" }
+      },
+      tags: ["ultra-compacte", "camping léger"],
+      note: "Pour les moteurs et compresseurs, la limite de démarrage est volontairement traitée de façon conservatrice."
+    },
+    {
+      id: "c1000-gen2",
+      name: "Anker SOLIX C1000 Gen 2",
+      shortName: "C1000 Gen 2",
+      capacityWh: 1024,
+      image: "assets/images/anker-solix-c1000-gen2.webp",
+      useCase: "Camping, froid, Starlink et appareils du quotidien",
+      continuousW: 2000,
+      peakW: 3000,
+      motorStartupLimitW: 3000,
+      peakLabel: "3 000 W en pic",
+      chemistry: "LFP",
+      extension: null,
+      solar: { maxW: 600, minV: 11, maxV: 60, lowVoltageCurrentA: 8.2, highVoltageCurrentA: 14.5, splitV: 28 },
+      recharge: {
+        ac: { supported: true, fullMinutesEstimate: 49, manufacturerNote: "0 à 100 % en 49 min en mode UltraFast" },
+        alternator: { supported: true, inputW: 800, efficiency: 0.84, manufacturerNote: "Compatible chargeur alternateur Anker SOLIX" },
+        car: { supported: true, inputW: 120, efficiency: 0.82, manufacturerNote: "Prise véhicule 12 V / 120 W max." }
+      },
+      tags: ["polyvalente", "camping", "secours"]
+    },
+    {
+      id: "c2000-gen2",
+      name: "Anker SOLIX C2000 Gen 2",
+      shortName: "C2000 Gen 2",
+      capacityWh: 2048,
+      image: "assets/images/anker-solix-c2000-gen2.webp",
+      useCase: "Forte autonomie, usages exigeants et alimentation de secours",
+      continuousW: 2400,
+      peakW: 4000,
+      motorStartupLimitW: 4000,
+      peakLabel: "4 000 W en pic",
+      chemistry: "LFP",
+      extension: { id: "bp2000-gen2", name: "BP2000 Gen 2", extraWh: 2048, maxQty: 1 },
+      solar: { maxW: 800, minV: 11, maxV: 60, lowVoltageCurrentA: 8.2, highVoltageCurrentA: 17, splitV: 28 },
+      recharge: {
+        ac: { supported: true, fullMinutesEstimate: 63, manufacturerNote: "0 à 100 % en 1 h 03" },
+        alternator: { supported: true, inputW: 800, efficiency: 0.98, manufacturerNote: "0 à 100 % en 2 h 36 avec chargeur alternateur 800 W" },
+        car: { supported: true, inputW: 100, efficiency: 0.88, manufacturerNote: "Recharge sur prise véhicule" }
+      },
+      tags: ["2 kWh", "forte puissance", "extensible"]
+    }
+  ],
+
+  panels: [
+    { id: "ps60", name: "Anker SOLIX PS60", watts: 60, vmp: 16, voc: 18, imp: 3.75, isc: null, c300Allowed: true },
+    { id: "ps100", name: "Anker SOLIX PS100", watts: 100, vmp: 21.6, voc: 27, imp: 4.63, isc: null, c300Allowed: true },
+    { id: "ps200", name: "Anker SOLIX PS200", watts: 200, vmp: 48, voc: 57.6, imp: 4.16, isc: null, c300Allowed: false },
+    { id: "ps400", name: "Anker SOLIX PS400", watts: 400, vmp: 48, voc: 57.6, imp: 8.33, isc: 8.75, c300Allowed: false }
+  ],
+
+  categories: [
+    { id: "all", label: "Tous" },
+    { id: "camping", label: "Camping" },
+    { id: "cold", label: "Froid" },
+    { id: "health", label: "Santé" },
+    { id: "internet", label: "Internet" },
+    { id: "mobility", label: "Mobilité" },
+    { id: "photo", label: "Photo / drone" },
+    { id: "kitchen", label: "Cuisine" },
+    { id: "tools", label: "Outils" }
+  ],
+
+  appliances: [
+    { id: "fridge", category: "cold", icon: "❄", name: "Réfrigérateur", subtitle: "Compresseur domestique", mode: "runtime", nominalW: 120, startupW: 800, dutyCycle: 0.30, defaultHours: 24, quantity: 1, startupSensitive: true },
+    { id: "freezer", category: "cold", icon: "▣", name: "Congélateur", subtitle: "Compresseur", mode: "runtime", nominalW: 150, startupW: 1000, dutyCycle: 0.35, defaultHours: 24, quantity: 1, startupSensitive: true },
+    { id: "cooler-compressor", category: "camping", icon: "❄", name: "Glacière à compresseur", subtitle: "12/24 V ou secteur", mode: "runtime", nominalW: 50, startupW: 70, dutyCycle: 0.35, defaultHours: 24, quantity: 1, startupSensitive: false },
+    { id: "cooler-thermo", category: "camping", icon: "▤", name: "Glacière thermoélectrique", subtitle: "Fonctionnement quasi continu", mode: "runtime", nominalW: 50, startupW: 50, dutyCycle: 0.95, defaultHours: 24, quantity: 1 },
+
+    { id: "cpap-basic", category: "health", icon: "✚", name: "Appareil d’apnée du sommeil", subtitle: "PPC / CPAP • sans humidificateur", mode: "runtime", nominalW: 30, startupW: 35, dutyCycle: 1, defaultHours: 8, quantity: 1, displayUnit: "nights" },
+    { id: "cpap-humid", category: "health", icon: "✚", name: "Apnée du sommeil + humidificateur", subtitle: "PPC / CPAP • usage nocturne", mode: "runtime", nominalW: 60, startupW: 70, dutyCycle: 1, defaultHours: 8, quantity: 1, displayUnit: "nights" },
+    { id: "cpap-heated", category: "health", icon: "✚", name: "Apnée du sommeil + circuit chauffant", subtitle: "PPC / CPAP • humidificateur + tuyau chauffant", mode: "runtime", nominalW: 90, startupW: 100, dutyCycle: 1, defaultHours: 8, quantity: 1, displayUnit: "nights" },
+
+    { id: "starlink-mini", category: "internet", icon: "◉", name: "Starlink Mini", subtitle: "25–40 W en moyenne", mode: "runtime", nominalW: 35, startupW: 60, dutyCycle: 1, defaultHours: 8, quantity: 1 },
+    { id: "starlink-standard", category: "internet", icon: "◉", name: "Starlink Standard V4", subtitle: "75–100 W en moyenne", mode: "runtime", nominalW: 90, startupW: 150, dutyCycle: 1, defaultHours: 8, quantity: 1 },
+    { id: "starlink-v5", category: "internet", icon: "◉", name: "Starlink V5 / récent", subtitle: "Profil prudent modifiable", mode: "runtime", nominalW: 100, startupW: 170, dutyCycle: 1, defaultHours: 8, quantity: 1, provisional: true },
+    { id: "router", category: "internet", icon: "⌁", name: "Routeur / box 4G-5G", subtitle: "Connexion locale", mode: "runtime", nominalW: 15, startupW: 20, dutyCycle: 1, defaultHours: 12, quantity: 1 },
+
+    { id: "led", category: "camping", icon: "✦", name: "Éclairage LED", subtitle: "Lampe ou ruban LED", mode: "runtime", nominalW: 10, startupW: 10, dutyCycle: 1, defaultHours: 5, quantity: 2 },
+    { id: "fan", category: "camping", icon: "◌", name: "Ventilateur", subtitle: "Ventilateur portable", mode: "runtime", nominalW: 45, startupW: 70, dutyCycle: 1, defaultHours: 8, quantity: 1 },
+    { id: "laptop", category: "camping", icon: "▰", name: "Ordinateur portable", subtitle: "Bureautique / recharge", mode: "runtime", nominalW: 60, startupW: 70, dutyCycle: 1, defaultHours: 5, quantity: 1 },
+    { id: "phone", category: "camping", icon: "▯", name: "Smartphone", subtitle: "Recharge complète", mode: "charge", energyWhPerCharge: 15, chargerEfficiency: 0.88, defaultCharges: 2, quantity: 1 },
+    { id: "tablet", category: "camping", icon: "▭", name: "Tablette", subtitle: "Recharge complète", mode: "charge", energyWhPerCharge: 35, chargerEfficiency: 0.88, defaultCharges: 1, quantity: 1 },
+
+    { id: "ebike-400", category: "mobility", icon: "↗", name: "VAE 400 Wh", subtitle: "Recharge batterie", mode: "charge", energyWhPerCharge: 400, chargerEfficiency: 0.86, defaultCharges: 1, quantity: 1 },
+    { id: "ebike-500", category: "mobility", icon: "↗", name: "VAE 500 Wh", subtitle: "Recharge batterie", mode: "charge", energyWhPerCharge: 500, chargerEfficiency: 0.86, defaultCharges: 1, quantity: 1 },
+    { id: "ebike-750", category: "mobility", icon: "↗", name: "VAE 750 Wh", subtitle: "Grande batterie", mode: "charge", energyWhPerCharge: 750, chargerEfficiency: 0.86, defaultCharges: 1, quantity: 1 },
+
+    { id: "drone-small", category: "photo", icon: "◇", name: "Drone compact", subtitle: "Type DJI Mini", mode: "charge", energyWhPerCharge: 20, chargerEfficiency: 0.86, defaultCharges: 3, quantity: 1 },
+    { id: "drone-medium", category: "photo", icon: "◇", name: "Drone intermédiaire", subtitle: "Type DJI Air", mode: "charge", energyWhPerCharge: 60, chargerEfficiency: 0.86, defaultCharges: 2, quantity: 1 },
+    { id: "drone-large", category: "photo", icon: "◇", name: "Drone grande batterie", subtitle: "Type Mavic / équivalent", mode: "charge", energyWhPerCharge: 80, chargerEfficiency: 0.86, defaultCharges: 2, quantity: 1 },
+    { id: "actioncam", category: "photo", icon: "▣", name: "Caméra d'action", subtitle: "GoPro / équivalent", mode: "charge", energyWhPerCharge: 7, chargerEfficiency: 0.88, defaultCharges: 3, quantity: 1 },
+
+    { id: "coffee", category: "kitchen", icon: "☕", name: "Machine à café", subtitle: "Capsules / expresso", mode: "runtime", nominalW: 1300, startupW: 1350, dutyCycle: 1, defaultHours: 0.08, quantity: 1 },
+    { id: "kettle", category: "kitchen", icon: "◒", name: "Bouilloire", subtitle: "Chauffe rapide", mode: "runtime", nominalW: 2000, startupW: 2000, dutyCycle: 1, defaultHours: 0.10, quantity: 1 },
+    { id: "microwave", category: "kitchen", icon: "▦", name: "Micro-ondes", subtitle: "Puissance absorbée", mode: "runtime", nominalW: 1200, startupW: 1500, dutyCycle: 1, defaultHours: 0.15, quantity: 1 },
+    { id: "induction", category: "kitchen", icon: "◎", name: "Plaque induction", subtitle: "1 foyer", mode: "runtime", nominalW: 1800, startupW: 1800, dutyCycle: 1, defaultHours: 0.35, quantity: 1 },
+
+    { id: "air-pump", category: "tools", icon: "↯", name: "Compresseur / gonfleur", subtitle: "Petit compresseur", mode: "runtime", nominalW: 300, startupW: 900, dutyCycle: 1, defaultHours: 0.15, quantity: 1, startupSensitive: true },
+    { id: "water-pump", category: "tools", icon: "≈", name: "Pompe à eau", subtitle: "Moteur électrique", mode: "runtime", nominalW: 500, startupW: 1500, dutyCycle: 1, defaultHours: 0.4, quantity: 1, startupSensitive: true },
+    { id: "power-tool", category: "tools", icon: "⚒", name: "Outil électroportatif", subtitle: "Perceuse / meuleuse légère", mode: "runtime", nominalW: 500, startupW: 1000, dutyCycle: 1, defaultHours: 0.5, quantity: 1, startupSensitive: true }
+  ]
+};

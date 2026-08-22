@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Simulateur d'autonomie et de recharge Anker SOLIX par Marine Corail." />
+  <meta name="theme-color" content="#071923" />
+  <title>Simulateur Anker SOLIX | Marine Corail</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="Marine Corail Énergies - Simulateur Anker SOLIX">
+      <img class="brand-logo" src="assets/images/logo-marine-corail-energies.png" alt="Marine Corail Énergies" />
+    </a>
+    <div class="header-pill"><span class="status-dot"></span> Outil de simulation Anker SOLIX</div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">SIMULATEUR D’AUTONOMIE ANKER SOLIX</span>
+        <h1>Testez votre configuration avant de partir.</h1>
+        <p>Sélectionnez une station, ajoutez vos appareils et comparez l’autonomie, les contraintes de puissance et les différents temps de recharge.</p>
+      </div>
+      <div class="hero-proof" aria-label="Périmètre du simulateur">
+        <div class="proof-card"><strong>3</strong><span>stations</span></div>
+        <div class="proof-card"><strong>30+</strong><span>usages</span></div>
+        <div class="proof-card"><strong>4</strong><span>panneaux</span></div>
+      </div>
+    </section>
+
+    <section class="app-layout">
+      <div class="wizard-card">
+        <nav class="steps" aria-label="Étapes du simulateur">
+          <button class="step-tab active" data-step-target="1"><span>1</span><b>Station</b></button>
+          <button class="step-tab" data-step-target="2"><span>2</span><b>Appareils</b></button>
+          <button class="step-tab" data-step-target="3"><span>3</span><b>Recharge</b></button>
+          <button class="step-tab" data-step-target="4"><span>4</span><b>Résultat</b></button>
+        </nav>
+
+        <div class="step-panel active" data-step="1">
+          <div class="section-heading">
+            <div><span class="section-kicker">ÉTAPE 1</span><h2>Choisissez votre station</h2></div>
+            <p>La compatibilité est vérifiée sur la puissance continue, le pic de démarrage et l'énergie disponible.</p>
+          </div>
+          <div id="stationGrid" class="station-grid"></div>
+          <div id="extensionBox" class="extension-box hidden"></div>
+          <div class="wizard-actions right"><button class="btn primary" data-next>Choisir mes appareils <span>→</span></button></div>
+        </div>
+
+        <div class="step-panel" data-step="2">
+          <div class="section-heading">
+            <div><span class="section-kicker">ÉTAPE 2</span><h2>Que voulez-vous alimenter ?</h2></div>
+            <p>Les consommations types sont préremplies. Vous pouvez ajuster chaque usage ensuite.</p>
+          </div>
+
+          <div class="appliance-toolbar">
+            <label class="appliance-search">
+              <span aria-hidden="true">⌕</span>
+              <input id="applianceSearch" type="search" placeholder="Rechercher un appareil…" autocomplete="off" />
+            </label>
+            <div class="category-row" id="categoryFilters"></div>
+          </div>
+          <div id="applianceGrid" class="appliance-grid"></div>
+
+          <div class="selected-wrap">
+            <div class="selected-header">
+              <div><h3>Votre sélection</h3><p id="selectedCount">Aucun appareil ajouté</p></div>
+              <button id="addCustomBtn" class="btn ghost">+ Appareil personnalisé</button>
+            </div>
+            <div id="selectedAppliances" class="selected-list empty-state">
+              <div class="empty-icon">＋</div><p>Ajoutez vos appareils pour calculer votre autonomie.</p>
+            </div>
+          </div>
+          <div class="wizard-actions"><button class="btn subtle" data-prev>← Station</button><button class="btn primary" data-next>Choisir la recharge <span>→</span></button></div>
+        </div>
+
+        <div class="step-panel" data-step="3">
+          <div class="section-heading">
+            <div><span class="section-kicker">ÉTAPE 3</span><h2>Comment allez-vous la recharger ?</h2></div>
+            <p>Comparez le secteur, le véhicule et le solaire. Pour le solaire, nous vérifions aussi la compatibilité électrique.</p>
+          </div>
+
+          <div class="soc-card">
+            <div class="soc-top"><div><span>Niveau de batterie actuel</span><strong id="socValue">20 %</strong></div><div><span>Objectif</span><strong>100 %</strong></div></div>
+            <input id="socSlider" type="range" min="0" max="90" step="5" value="20" aria-label="Niveau de batterie actuel" />
+          </div>
+
+          <div class="charge-choice-head">
+            <div>
+              <h3>Comparez vos modes de recharge</h3>
+              <p>Vous pouvez en sélectionner plusieurs. Les estimations se mettent à jour instantanément.</p>
+            </div>
+            <span class="multi-select-hint">Sélection multiple</span>
+          </div>
+          <div id="chargeMethods" class="charge-methods"></div>
+
+          <div id="solarConfigurator" class="solar-config hidden">
+            <div class="solar-head"><div><span class="sun-icon">☀</span><div><h3>Recharge solaire</h3><p>Choisissez le panneau et la quantité.</p></div></div><span id="solarCompatibilityBadge" class="mini-badge neutral">À configurer</span></div>
+            <div class="solar-fields">
+              <label>Panneau<select id="solarPanelSelect"></select></label>
+              <label>Quantité<select id="solarQty"><option value="1">1 panneau</option><option value="2">2 panneaux</option><option value="3">3 panneaux</option></select></label>
+              <label>Conditions solaires<select id="solarCondition"><option value="excellent">Excellentes</option><option value="good" selected>Bonnes</option><option value="average">Moyennes</option></select></label>
+            </div>
+            <div id="solarWiringNote" class="info-strip"></div>
+          </div>
+
+          <div id="liveChargeEstimate" class="live-charge-estimate" aria-live="polite"></div>
+
+          <div class="wizard-actions"><button class="btn subtle" data-prev>← Appareils</button><button class="btn primary" data-next>Voir mon résultat <span>→</span></button></div>
+        </div>
+
+        <div class="step-panel" data-step="4">
+          <div class="results-hero" id="resultsHero"></div>
+          <div class="results-grid">
+            <div class="result-card"><span class="result-label">Consommation estimée</span><strong id="resultEnergy">—</strong><small>par jour selon vos usages</small></div>
+            <div class="result-card"><span class="result-label">Puissance simultanée</span><strong id="resultContinuous">—</strong><small id="resultContinuousSub">—</small></div>
+            <div class="result-card"><span class="result-label">Pic de démarrage</span><strong id="resultPeak">—</strong><small id="resultPeakSub">—</small></div>
+            <div class="result-card"><span class="result-label">Recharge la plus rapide</span><strong id="resultCharge">—</strong><small id="resultChargeSub">—</small></div>
+          </div>
+          <div id="recommendationBox" class="recommendation hidden"></div>
+          <details class="details-card">
+            <summary>Voir les hypothèses et le détail du calcul</summary>
+            <div id="calculationDetails" class="details-content"></div>
+          </details>
+          <div class="legal-note">Estimation indicative et non contractuelle. La consommation réelle dépend des appareils, de leur âge, de la température, du rendement des chargeurs et des conditions d'utilisation. Les appareils à moteur ou compresseur peuvent présenter des pointes de démarrage très supérieures à leur puissance nominale.</div>
+          <div class="wizard-actions"><button class="btn subtle" data-prev>← Modifier la recharge</button><button class="btn primary" id="restartBtn">Recommencer</button></div>
+        </div>
+      </div>
+
+      <aside class="live-summary" id="liveSummary">
+        <div class="summary-topline"><span>APERÇU EN DIRECT</span><span class="live-dot"></span></div>
+        <div class="summary-station">
+          <div class="summary-product"><img id="summaryStationImage" src="assets/images/anker-solix-c1000-gen2.webp" alt="" /></div>
+          <div><small>Station sélectionnée</small><strong id="summaryStation">C1000 Gen 2</strong><span id="summaryCapacity">1 024 Wh • 2 000 W</span></div>
+        </div>
+        <div class="summary-metric focus"><span>Autonomie estimée</span><strong id="summaryRuntime">—</strong><small id="summaryRuntimeHint">Ajoutez des appareils</small></div>
+        <div class="summary-metric charge-summary"><span>Recharge la plus rapide</span><strong id="summaryChargeTime">—</strong><small id="summaryChargeHint">Choisissez un mode de recharge</small></div>
+        <div class="meter-block"><div class="meter-label"><span>Charge continue</span><b id="summaryContinuous">0 / 2 000 W</b></div><div class="meter"><i id="continuousMeter"></i></div></div>
+        <div class="meter-block"><div class="meter-label"><span>Pic de démarrage</span><b id="summaryPeak">0 / 3 000 W</b></div><div class="meter"><i id="peakMeter"></i></div></div>
+        <div id="summaryStatus" class="summary-status neutral"><span>●</span><div><strong>Prêt à simuler</strong><small>Sélectionnez vos usages.</small></div></div>
+        <button class="summary-cta" data-step-target="4">Voir le bilan détaillé <span>→</span></button>
+      </aside>
+    </section>
+
+    <div class="mobile-live-bar" id="mobileLiveBar" aria-live="polite" aria-label="Résumé de la simulation">
+      <div class="mobile-live-main">
+        <span class="mobile-live-label" id="mobileSummaryStation">C1000 Gen 2</span>
+        <strong id="mobileSummaryRuntime">—</strong>
+      </div>
+      <div class="mobile-live-status neutral" id="mobileSummaryStatus"><span>●</span><b>Prêt</b></div>
+    </div>
+
+    <section class="trust-band">
+      <div><span>⚡</span><div><strong>Puissance vérifiée</strong><small>Continue + démarrage</small></div></div>
+      <div><span>☀</span><div><strong>Solaire réaliste</strong><small>MPPT + puissance utile</small></div></div>
+      <div><span>▣</span><div><strong>Calcul transparent</strong><small>Hypothèses consultables</small></div></div>
+      <div><span>MC</span><div><strong>Marine Corail Énergies</strong><small>Outil de simulation</small></div></div>
+    </section>
+
+    <footer class="simulator-footer">
+      <div>
+        <strong>À propos des estimations</strong>
+        <p>Les résultats sont indicatifs et non contractuels. L’autonomie et les temps de recharge réels varient selon les appareils, leur état, la température, le rendement des chargeurs, l’ensoleillement et les conditions d’utilisation.</p>
+      </div>
+      <div>
+        <strong>Données et sécurité</strong>
+        <p>Le calcul est effectué localement dans votre navigateur : les valeurs saisies dans le simulateur ne sont ni enregistrées ni transmises. Pour les charges à moteur ou compresseur, une marge de démarrage est appliquée par prudence.</p>
+      </div>
+    </footer>
+  </main>
+
+  <dialog id="customDialog" class="custom-dialog">
+    <form method="dialog" id="customForm">
+      <div class="dialog-head"><div><span class="section-kicker">APPAREIL PERSONNALISÉ</span><h3>Ajoutez votre équipement</h3></div><button class="dialog-close" value="cancel" aria-label="Fermer">×</button></div>
+      <div class="form-grid">
+        <label class="span-2">Nom de l'appareil<input id="customName" required placeholder="Ex. dessalinisateur" /></label>
+        <label>Puissance nominale (W)<input id="customPower" type="number" min="1" value="100" required /></label>
+        <label>Heures / jour<input id="customHours" type="number" min="0.1" max="24" step="0.1" value="2" required /></label>
+        <label>Quantité<input id="customQty" type="number" min="1" max="20" value="1" required /></label>
+        <label>Pic de démarrage (W)<input id="customStartup" type="number" min="1" value="100" /></label>
+      </div>
+      <label class="checkbox-line"><input id="customMotor" type="checkbox" /> <span>Cet appareil possède un moteur / compresseur</span></label>
+      <div class="dialog-actions"><button class="btn subtle" value="cancel">Annuler</button><button class="btn primary" id="customSubmit" value="default">Ajouter l'appareil</button></div>
+    </form>
+  </dialog>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
