@@ -3,6 +3,7 @@
 
   const D = window.SOLIX_DATA;
   const state = {
+    view: location.hash === "#caracteristiques" ? "specs" : "simulator",
     step: 1,
     stationId: "c1000-gen2",
     extension: false,
@@ -24,7 +25,24 @@
   const getPanel = (id = state.solarPanelId) => D.panels.find(p => p.id === id);
   const isChargeSelected = id => state.chargeMethods.includes(id);
   const totalCapacityWh = (station = getStation(), extension = state.extension) => station.capacityWh + (extension && station.extension ? station.extension.extraWh : 0);
-  const usableEnergyWh = (station = getStation(), extension = state.extension) => totalCapacityWh(station, extension) * D.config.acUsableEnergyFactor;
+  const usableEnergyWh = (station = getStation(), extension = state.extension) => totalCapacityWh(station, extension) * (station.outputType === "dc-only" ? D.config.dcUsableEnergyFactor : D.config.acUsableEnergyFactor);
+
+  const DC_COMPATIBLE_IDS = new Set([
+    "cooler-compressor", "cooler-thermo", "starlink-mini", "router", "led", "fan", "laptop",
+    "phone", "tablet", "drone-small", "drone-medium", "drone-large", "actioncam"
+  ]);
+  const AC_ONLY_IDS = new Set([
+    "fridge", "freezer", "cpap-basic", "cpap-humid", "cpap-heated", "starlink-standard", "starlink-v5",
+    "ebike-400", "ebike-500", "ebike-750", "coffee", "kettle", "microwave", "induction", "air-pump", "water-pump", "power-tool"
+  ]);
+  function inferSupply(base) {
+    if (base.supply) return base.supply;
+    if (AC_ONLY_IDS.has(base.id)) return "ac";
+    if (DC_COMPATIBLE_IDS.has(base.id)) return "either";
+    return "ac";
+  }
+  function supplyLabel(supply) { return supply === "ac" ? "230 V" : "USB / 12 V / CC"; }
+  function interfaceIncompatible(station, appliance) { return station.outputType === "dc-only" && appliance.supply === "ac"; }
 
   function applianceTemplate(base) {
     return {
@@ -45,7 +63,8 @@
       startupSensitive: Boolean(base.startupSensitive),
       displayUnit: base.displayUnit || null,
       custom: Boolean(base.custom),
-      provisional: Boolean(base.provisional)
+      provisional: Boolean(base.provisional),
+      supply: inferSupply(base)
     };
   }
 
@@ -58,7 +77,7 @@
           <span class="station-select" aria-hidden="true">✓</span>
         </div>
         <div class="station-card-copy">
-          <div class="station-title-row"><h3>${s.shortName}</h3><span class="chemistry-badge">${s.chemistry}</span></div>
+          <div class="station-title-row"><h3>${s.shortName}</h3><div class="station-badges"><span class="chemistry-badge">${s.chemistry}</span><span class="output-badge ${s.outputType === "dc-only" ? "dc" : "acdc"}">${s.outputTypeLabel}</span></div></div>
           <p class="station-usecase">${s.useCase}</p>
           <div class="station-specs">
             <div class="spec-pill"><span>Capacité</span><strong>${fmt.format(s.capacityWh)} Wh</strong></div>
@@ -108,11 +127,13 @@
     });
     $("#applianceGrid").innerHTML = list.length ? list.map(a => {
       const added = state.appliances.some(x => x.id === a.id);
-      return `<button class="appliance-card ${added ? "added" : ""}" data-appliance="${a.id}" aria-pressed="${added}">
-        <span class="appliance-icon">${a.icon}</span>
+      const supply = inferSupply(a);
+      const mismatch = getStation().outputType === "dc-only" && supply === "ac";
+      return `<button class="appliance-card ${added ? "added" : ""} ${mismatch ? "interface-incompatible" : ""}" data-appliance="${a.id}" aria-pressed="${added}">
+        <div class="appliance-card-top"><span class="appliance-icon">${a.icon}</span><span class="supply-badge ${mismatch ? "bad" : supply === "ac" ? "ac" : "dc"}">${mismatch ? "230 V requis" : supplyLabel(supply)}</span></div>
         <h4>${a.name}${a.provisional ? " *" : ""}</h4>
         <p>${a.subtitle}</p>
-        <span class="appliance-add">${added ? "✓ Ajouté" : "+ Ajouter"}</span>
+        <span class="appliance-add">${added ? "✓ Ajouté" : mismatch ? "+ Tester malgré tout" : "+ Ajouter"}</span>
       </button>`;
     }).join("") : `<div class="appliance-no-results"><span>⌕</span><strong>Aucun appareil trouvé</strong><p>Essayez un autre mot-clé ou ajoutez un appareil personnalisé.</p></div>`;
     $$("[data-appliance]").forEach(btn => btn.addEventListener("click", () => {
@@ -138,7 +159,7 @@
     el.className = "selected-list";
     el.innerHTML = state.appliances.map(a => `
       <div class="selected-item" data-uid="${a.uid}">
-        <div class="selected-name"><span class="appliance-icon">${a.icon}</span><div><strong>${a.name}</strong><small>${a.mode === "charge" ? `${fmt.format(a.energyWhPerCharge)} Wh / charge` : `${fmt.format(a.nominalW)} W nominal${a.startupW > a.nominalW ? ` • pic ${fmt.format(a.startupW)} W` : ""}`}</small></div></div>
+        <div class="selected-name"><span class="appliance-icon">${a.icon}</span><div><strong>${a.name}</strong><small>${a.mode === "charge" ? `${fmt.format(a.energyWhPerCharge)} Wh / charge` : `${fmt.format(a.nominalW)} W nominal${a.startupW > a.nominalW ? ` • pic ${fmt.format(a.startupW)} W` : ""}`} • ${supplyLabel(a.supply)}</small></div></div>
         <div class="mini-field"><label>Quantité</label><input data-field="quantity" type="number" min="1" max="20" value="${a.quantity}"></div>
         <div class="mini-field usage-field"><label>${a.mode === "charge" ? "Charges / jour" : "Heures / jour"}</label><input data-field="${a.mode === "charge" ? "charges" : "hours"}" type="number" min="0.05" ${a.mode === "runtime" ? 'max="24" step="0.05"' : 'max="20" step="1"'} value="${a.mode === "charge" ? a.charges : a.hours}"></div>
         <button class="remove-btn" data-remove aria-label="Supprimer">×</button>
@@ -197,8 +218,13 @@
     let title = "Configuration adaptée";
     let message = "La station dispose d'une marge cohérente pour les appareils sélectionnés.";
 
+    const interfaceMismatch = state.appliances.filter(a => interfaceIncompatible(station, a));
     if (!state.appliances.length) {
       status = "neutral"; title = "Prêt à simuler"; message = "Ajoutez vos appareils pour obtenir une estimation.";
+    } else if (interfaceMismatch.length) {
+      status = "bad"; title = "Sortie 230 V nécessaire";
+      const names = interfaceMismatch.slice(0, 2).map(a => a.name).join(", ");
+      message = `${station.shortName} est une station CC uniquement, sans prise 230 V. ${names}${interfaceMismatch.length > 2 ? "…" : ""} nécessite une alimentation secteur dans le profil sélectionné.`;
     } else if (continuousRatio > 1) {
       status = "bad"; title = "Puissance continue dépassée"; message = `Les appareils peuvent demander ${fmt.format(loads.continuousW)} W alors que la station fournit ${fmt.format(station.continuousW)} W en continu.`;
     } else if (peakRatio > 1) {
@@ -209,7 +235,7 @@
       status = "good"; title = "Configuration confortable"; message = "La puissance est compatible et la réserve énergétique couvre plus d'une journée de l'usage configuré.";
     }
 
-    return { ...loads, status, title, message, peakLimit, continuousRatio, peakRatio };
+    return { ...loads, status, title, message, peakLimit, continuousRatio, peakRatio, interfaceMismatch };
   }
 
   function formatRuntime(hours) {
@@ -230,7 +256,7 @@
     const hasConfiguredUsage = state.appliances.length > 0;
     const appLayout = $(".app-layout");
     if (appLayout) appLayout.classList.toggle("summary-hidden", !hasConfiguredUsage);
-    $("#summaryStation").textContent = s.shortName + (state.extension ? " + BP2000" : "");
+    $("#summaryStation").textContent = s.shortName + (state.extension ? " + BP2000 Gen 2" : "");
     $("#summaryCapacity").textContent = `${fmt.format(cap)} Wh • ${fmt.format(s.continuousW)} W`;
     const summaryImg = $("#summaryStationImage");
     if (summaryImg) { summaryImg.src = s.image; summaryImg.alt = s.name; }
@@ -250,13 +276,13 @@
 
     // Sur tablette/mobile, un résumé compact remplace le grand aperçu latéral.
     const mobileBar = $("#mobileLiveBar");
-    const showMobileBar = hasConfiguredUsage && state.step !== 4;
+    const showMobileBar = state.view === "simulator" && hasConfiguredUsage && state.step !== 4;
     if (mobileBar) mobileBar.classList.toggle("visible", showMobileBar);
     document.body.classList.toggle("has-mobile-summary", showMobileBar);
     const mobileStation = $("#mobileSummaryStation");
     const mobileRuntime = $("#mobileSummaryRuntime");
     const mobileStatus = $("#mobileSummaryStatus");
-    if (mobileStation) mobileStation.textContent = s.shortName + (state.extension ? " + BP2000" : "");
+    if (mobileStation) mobileStation.textContent = s.shortName + (state.extension ? " + BP2000 Gen 2" : "");
     if (mobileRuntime) mobileRuntime.textContent = hasConfiguredUsage ? formatRuntime(r.runtimeHours) : "—";
     if (mobileStatus) {
       mobileStatus.className = `mobile-live-status ${r.status}`;
@@ -272,20 +298,22 @@
   }
 
   function compatiblePanelsForStation(station) {
-    return D.panels.filter(p => station.id !== "c300" || p.c300Allowed);
+    if (station.solar.allowedPanelIds) return D.panels.filter(p => station.solar.allowedPanelIds.includes(p.id));
+    return D.panels.filter(p => p.vmp >= station.solar.minV && p.voc <= station.solar.maxV);
   }
 
   function normalizeSolarSelection() {
     const station = getStation();
     const compatible = compatiblePanelsForStation(station);
     if (!compatible.some(p => p.id === state.solarPanelId)) state.solarPanelId = compatible[0].id;
-    if (station.id === "c300") state.solarQty = 1;
+    if (station.solar.allowedPanelIds) state.solarQty = 1;
   }
 
   function renderChargeMethods() {
     const s = getStation();
     const methods = [
-      { id: "ac", icon: "⚡", title: "Secteur", desc: s.recharge.ac.supported ? s.recharge.ac.manufacturerNote : "Non documenté", enabled: s.recharge.ac.supported },
+      { id: "ac", icon: "⚡", title: "Secteur", desc: s.recharge.ac.supported ? s.recharge.ac.manufacturerNote : "Pas d'entrée secteur directe", enabled: s.recharge.ac.supported },
+      { id: "usb-c", icon: "⇄", title: "USB-C", desc: s.recharge.usbC?.supported ? s.recharge.usbC.manufacturerNote : "Non prévu comme recharge principale", enabled: Boolean(s.recharge.usbC?.supported) },
       { id: "solar", icon: "☀", title: "Solaire", desc: `Jusqu'à ${fmt.format(s.solar.maxW)} W d'entrée solaire`, enabled: true },
       { id: "alternator", icon: "↻", title: "Alternateur", desc: s.recharge.alternator.supported ? "Chargeur Anker SOLIX jusqu'à 800 W" : "Non prévu sur ce modèle", enabled: s.recharge.alternator.supported },
       { id: "car", icon: "▰", title: "Prise véhicule", desc: s.recharge.car.supported ? `${fmt.format(s.recharge.car.inputW)} W environ` : "Non documenté", enabled: s.recharge.car.supported }
@@ -322,8 +350,8 @@
     let compatible = true;
     let reason = "Configuration compatible.";
 
-    if (station.id === "c300") {
-      if (!panel.c300Allowed || qty !== 1) { compatible = false; reason = "La C300 est limitée aux PS60/PS100 dans une configuration simple à un panneau."; }
+    if (station.solar.allowedPanelIds) {
+      if (!station.solar.allowedPanelIds.includes(panel.id) || qty !== 1) { compatible = false; reason = `${station.shortName} est limitée aux PS60/PS100 dans une configuration simple à un panneau.`; }
     } else if (qty > 1) {
       if (panel.voc * qty <= station.solar.maxV) {
         wiring = "series";
@@ -355,7 +383,7 @@
     const panels = compatiblePanelsForStation(station);
     $("#solarPanelSelect").innerHTML = panels.map(p => `<option value="${p.id}" ${p.id === state.solarPanelId ? "selected" : ""}>${p.name} — ${p.watts} W</option>`).join("");
     $("#solarQty").value = String(state.solarQty);
-    $("#solarQty").disabled = station.id === "c300";
+    $("#solarQty").disabled = Boolean(station.solar.allowedPanelIds);
     $("#solarCondition").value = state.solarCondition;
     const setup = solarSetup();
     const badge = $("#solarCompatibilityBadge");
@@ -372,9 +400,19 @@
     const needWh = totalCapacityWh() * remaining;
 
     if (method === "ac") {
+      if (!station.recharge.ac.supported) return { id: "ac", title: "Secteur", icon: "⚡", hours: Infinity, label: "Non disponible", sub: "Pas d'entrée secteur directe" };
       let mins = station.recharge.ac.fullMinutesEstimate * remaining;
       if (state.extension && station.extension) mins *= 1.85;
       return { id: "ac", title: "Secteur", icon: "⚡", hours: mins / 60, label: formatMinutes(mins), sub: station.recharge.ac.manufacturerNote + (state.extension ? " • extension : estimation calculée" : "") };
+    }
+    if (method === "usb-c") {
+      if (!station.recharge.usbC?.supported) return { id: "usb-c", title: "USB-C", icon: "⇄", hours: Infinity, label: "Non disponible", sub: "Mode non pris en charge" };
+      if (station.recharge.usbC.fullMinutesEstimate) {
+        const mins = station.recharge.usbC.fullMinutesEstimate * remaining;
+        return { id: "usb-c", title: "USB-C", icon: "⇄", hours: mins / 60, label: formatMinutes(mins), sub: station.recharge.usbC.manufacturerNote };
+      }
+      const h = needWh / (station.recharge.usbC.inputW * station.recharge.usbC.efficiency);
+      return { id: "usb-c", title: "USB-C", icon: "⇄", hours: h, label: formatHoursCharge(h), sub: station.recharge.usbC.manufacturerNote };
     }
     if (method === "alternator") {
       if (!station.recharge.alternator.supported) return { id: "alternator", title: "Alternateur", icon: "↻", hours: Infinity, label: "Non disponible", sub: "Mode non pris en charge" };
@@ -476,13 +514,14 @@
     const recBox = $("#recommendationBox");
     if ((r.status === "bad" || r.status === "warn") && rec) {
       recBox.classList.remove("hidden");
-      recBox.innerHTML = `<div><h4>Alternative technique</h4><p>Cette configuration offre davantage de marge électrique pour les usages sélectionnés :</p></div><strong>${rec.name}${rec.extension ? " + BP2000" : ""}</strong>`;
+      recBox.innerHTML = `<div><h4>Alternative technique</h4><p>Cette configuration offre davantage de marge électrique pour les usages sélectionnés :</p></div><strong>${rec.name}${rec.extension ? " + BP2000 Gen 2" : ""}</strong>`;
     } else recBox.classList.add("hidden");
 
     const solar = isChargeSelected("solar") ? solarSetup() : null;
     $("#calculationDetails").innerHTML = `
       <ul>
-        <li>Capacité nominale : <b>${fmt.format(totalCapacityWh())} Wh</b>. Énergie AC exploitable retenue : <b>${fmt.format(usableEnergyWh())} Wh</b> (coefficient ${Math.round(D.config.acUsableEnergyFactor*100)} %).</li>
+        <li>Capacité nominale : <b>${fmt.format(totalCapacityWh())} Wh</b>. Énergie exploitable retenue : <b>${fmt.format(usableEnergyWh())} Wh</b> (coefficient ${Math.round((getStation().outputType === "dc-only" ? D.config.dcUsableEnergyFactor : D.config.acUsableEnergyFactor)*100)} %).</li>
+        ${getStation().outputType === "dc-only" ? `<li><b>${getStation().shortName}</b> ne possède pas de sortie 230 V. Les profils marqués 230 V sont donc déclarés incompatibles même si leur consommation énergétique serait faible.</li>` : ""}
         <li>Consommation journalière : somme des puissances × durées × cycles de fonctionnement, avec pertes de charge intégrées pour les batteries de VAE, drones et appareils rechargeables.</li>
         <li>Puissance continue : <b>${fmt.format(r.continuousW)} W</b>. Pic de démarrage estimé : <b>${fmt.format(r.worstPeakW)} W</b>.</li>
         <li>Une marge de sécurité de <b>${Math.round((D.config.startupSafetyFactor-1)*100)} %</b> est appliquée autour des démarrages moteurs/compresseurs.</li>
@@ -502,7 +541,8 @@
         const load = computeLoads(s);
         const motorLimit = s.motorStartupLimitW || s.peakW;
         const peakLimit = load.worstAppliance?.startupSensitive ? motorLimit : s.peakW;
-        const compatible = load.continuousW <= s.continuousW && load.worstPeakW * D.config.startupSafetyFactor <= peakLimit;
+        const interfaceOk = !state.appliances.some(a => interfaceIncompatible(s, a));
+        const compatible = interfaceOk && load.continuousW <= s.continuousW && load.worstPeakW * D.config.startupSafetyFactor <= peakLimit;
         if (compatible) {
           const cap = (s.capacityWh + (ext && s.extension ? s.extension.extraWh : 0)) * D.config.acUsableEnergyFactor;
           const runtime = load.dailyWh > 0 ? cap / load.dailyWh * 24 : Infinity;
@@ -513,6 +553,76 @@
     candidates.sort((a,b) => a.capacity - b.capacity);
     const current = `${state.stationId}-${state.extension}`;
     return candidates.find(c => `${c.stationId}-${c.extension}` !== current && c.runtime >= Math.min(D.config.lowRuntimeHours, Math.max(1, evaluate().runtimeHours))) || null;
+  }
+
+  function renderSpecifications() {
+    const cards = $("#specCards");
+    const table = $("#specComparison");
+    const panelBox = $("#panelCompatibility");
+    if (!cards || !table || !panelBox) return;
+
+    cards.innerHTML = D.stations.map(s => `
+      <article class="spec-model-card ${s.outputType === "dc-only" ? "dc-model" : ""}">
+        <div class="spec-model-media"><img src="${s.image}" alt="${s.name}" loading="lazy"></div>
+        <div class="spec-model-copy">
+          <div class="spec-model-top"><div><span class="spec-type ${s.outputType === "dc-only" ? "dc" : ""}">${s.outputTypeLabel}</span><h2>${s.shortName}</h2></div><span class="chemistry-badge">${s.chemistry}</span></div>
+          <p class="spec-usecase">${s.useCase}</p>
+          <div class="spec-key-grid">
+            <div><span>Capacité</span><strong>${fmt.format(s.capacityWh)} Wh</strong></div>
+            <div><span>${s.outputType === "dc-only" ? "Sortie totale" : "Puissance"}</span><strong>${fmt.format(s.continuousW)} W</strong></div>
+            <div><span>Solaire</span><strong>${fmt.format(s.solar.maxW)} W max</strong></div>
+            <div><span>Poids</span><strong>${s.specs.weight}</strong></div>
+          </div>
+          <div class="spec-detail-list">
+            <div><span>Recharge</span><b>${s.specs.rechargeHeadline}</b></div>
+            <div><span>Sorties</span><b>${s.specs.outputs}</b></div>
+            <div><span>Dimensions</span><b>${s.specs.dimensions}</b></div>
+            <div><span>Extension</span><b>${s.extension ? `Oui • jusqu'à ${fmt.format(s.capacityWh + s.extension.extraWh)} Wh` : "Non"}</b></div>
+          </div>
+          ${s.note ? `<div class="spec-note">${s.note}</div>` : ""}
+          <button class="btn subtle spec-sim-btn" data-spec-sim="${s.id}">Simuler avec ce modèle <span>→</span></button>
+        </div>
+      </article>`).join("");
+
+    const rows = [
+      ["Type", s => s.outputTypeLabel],
+      ["Capacité", s => `${fmt.format(s.capacityWh)} Wh`],
+      ["Puissance", s => `${fmt.format(s.continuousW)} W`],
+      ["Pic / Surge", s => s.outputType === "dc-only" ? "—" : s.peakLabel],
+      ["Entrée solaire", s => s.specs.solarInput],
+      ["Recharge rapide", s => s.specs.rechargeHeadline],
+      ["Batterie d’extension", s => s.extension ? `+ ${fmt.format(s.extension.extraWh)} Wh` : "Non"],
+      ["ASI", s => s.specs.ups],
+      ["Poids", s => s.specs.weight],
+      ["Dimensions", s => s.specs.dimensions]
+    ];
+    table.innerHTML = `<thead><tr><th>Caractéristique</th>${D.stations.map(s => `<th><img src="${s.image}" alt=""><span>${s.shortName}</span></th>`).join("")}</tr></thead><tbody>${rows.map(([label, val]) => `<tr><th>${label}</th>${D.stations.map(s => `<td>${val(s)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+
+    panelBox.innerHTML = `<div class="panel-grid-head"><span>Panneau</span>${D.stations.map(s => `<b>${s.shortName}</b>`).join("")}</div>${D.panels.map(p => `<div class="panel-grid-row"><div><strong>${p.name.replace("Anker SOLIX ", "")}</strong><small>${p.watts} W</small></div>${D.stations.map(s => { const allowed = compatiblePanelsForStation(s).some(x => x.id === p.id); return `<span class="panel-status ${allowed ? "yes" : "no"}">${allowed ? "✓ Compatible" : "—"}</span>`; }).join("")}</div>`).join("")}`;
+
+    $$('[data-spec-sim]').forEach(btn => btn.addEventListener('click', () => {
+      state.stationId = btn.dataset.specSim;
+      state.extension = false;
+      normalizeSolarSelection();
+      renderAll();
+      setView('simulator');
+      setStep(1);
+    }));
+  }
+
+  function setView(view, updateHash = true) {
+    state.view = view === "specs" ? "specs" : "simulator";
+    $$('[data-view]').forEach(el => el.classList.toggle('active', el.dataset.view === state.view));
+    $$('.main-nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.viewTarget === state.view));
+    if (updateHash) history.replaceState(null, '', state.view === 'specs' ? '#caracteristiques' : '#simulateur');
+    renderSummary();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    notifyParentHeight();
+  }
+
+  function bindViewNavigation() {
+    $$('[data-view-target]').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.viewTarget)));
+    window.addEventListener('hashchange', () => setView(location.hash === '#caracteristiques' ? 'specs' : 'simulator', false));
   }
 
   function updateComputedUI() {
@@ -531,11 +641,40 @@
     window.scrollTo({ top: document.querySelector(".app-layout").offsetTop - 12, behavior: "smooth" });
   }
 
+  function resetSimulation({ smooth = true } = {}) {
+    state.view = "simulator";
+    state.step = 1;
+    state.stationId = "c1000-gen2";
+    state.extension = false;
+    state.appliances = [];
+    state.category = "all";
+    state.applianceQuery = "";
+    state.soc = 20;
+    state.chargeMethods = ["ac"];
+    state.solarPanelId = "ps200";
+    state.solarQty = 1;
+    state.solarCondition = "good";
+
+    const search = $("#applianceSearch");
+    if (search) search.value = "";
+    const socSlider = $("#socSlider");
+    if (socSlider) socSlider.value = "20";
+    const socValue = $("#socValue");
+    if (socValue) socValue.textContent = "20 %";
+    const customDialog = $("#customDialog");
+    if (customDialog?.open) customDialog.close();
+
+    renderAll();
+    setView("simulator", true);
+    setStep(1);
+    window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+  }
+
   function bindNavigation() {
-    $$('[data-next]').forEach(b => b.addEventListener('click', () => setStep(state.step + 1)));
-    $$('[data-prev]').forEach(b => b.addEventListener('click', () => setStep(state.step - 1)));
-    $$('[data-step-target]').forEach(b => b.addEventListener('click', () => setStep(b.dataset.stepTarget)));
-    $("#restartBtn").addEventListener("click", () => { state.appliances = []; state.extension = false; state.soc = 20; state.chargeMethods = ["ac"]; state.applianceQuery = ""; const search = $("#applianceSearch"); if (search) search.value = ""; renderAll(); setStep(1); });
+    $('[data-next]').forEach(b => b.addEventListener('click', () => setStep(state.step + 1)));
+    $('[data-prev]').forEach(b => b.addEventListener('click', () => setStep(state.step - 1)));
+    $('[data-step-target]').forEach(b => b.addEventListener('click', () => setStep(b.dataset.stepTarget)));
+    $("#restartBtn").addEventListener("click", () => resetSimulation());
   }
 
   function bindApplianceSearch() {
@@ -571,7 +710,8 @@
       state.appliances.push(applianceTemplate({
         id: `custom-${Date.now()}`, name, icon: "⚡", subtitle: "Appareil personnalisé", custom: true,
         nominalW: power, startupW: Number($("#customStartup").value || power), defaultHours: Number($("#customHours").value || 1),
-        quantity: Number($("#customQty").value || 1), dutyCycle: 1, startupSensitive: $("#customMotor").checked
+        quantity: Number($("#customQty").value || 1), dutyCycle: 1, startupSensitive: $("#customMotor").checked,
+        supply: $("#customSupply").value || "ac"
       }));
       dialog.close();
       $("#customForm").reset(); $("#customPower").value = 100; $("#customStartup").value = 100; $("#customHours").value = 2; $("#customQty").value = 1;
@@ -586,6 +726,7 @@
     renderSelected();
     renderChargeMethods();
     renderSummary();
+    renderSpecifications();
   }
 
   function notifyParentHeight() {
@@ -606,8 +747,15 @@
   window.addEventListener("resize", notifyParentHeight);
 
   renderAll();
+  setView(state.view, false);
   bindNavigation();
+  bindViewNavigation();
   bindApplianceSearch();
   bindRechargeControls();
   bindCustomDialog();
+
+  window.MCSolix = Object.freeze({
+    reset: (options = {}) => resetSimulation(options),
+    getState: () => ({ ...state, appliances: state.appliances.map(item => ({ ...item })) })
+  });
 })();

@@ -816,3 +816,301 @@ body {
   .mobile-live-main strong { font-size: 20px; }
   .mobile-live-status { min-width: 84px; padding: 8px; }
 }
+
+/* V1.4 — navigation Simulateur / Caractéristiques + C300 DC + usage tablette */
+.view-panel { display: none; }
+.view-panel.active { display: block; animation: fadeIn .22s ease both; }
+
+.main-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid #d8e2e8;
+  border-radius: 15px;
+  background: rgba(255,255,255,.82);
+  box-shadow: 0 7px 22px rgba(13,40,61,.06);
+  backdrop-filter: blur(12px);
+}
+.main-nav-btn {
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  padding: 10px 15px;
+  color: #607581;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+  min-height: 42px;
+}
+.main-nav-btn.active { background: #155a9c; color: white; box-shadow: 0 5px 14px rgba(21,90,156,.18); }
+.main-nav-btn:focus-visible { outline: 3px solid rgba(21,90,156,.22); outline-offset: 2px; }
+
+/* 4 stations sur grand écran */
+.station-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.station-card { padding: 0; overflow: hidden; min-height: 330px; }
+.station-media { height: 150px; padding: 13px; display: grid; place-items: center; background: linear-gradient(145deg,#f8fafb,#eef3f5); border-bottom: 1px solid #e5ecef; position: relative; }
+.station-media img { width: 100%; height: 126px; object-fit: contain; filter: drop-shadow(0 10px 14px rgba(7,25,35,.10)); }
+.station-media::after { content: ""; position: absolute; width: 54%; height: 11px; left: 23%; bottom: 15px; background: rgba(10,28,38,.10); filter: blur(8px); border-radius: 50%; z-index: 0; }
+.station-media img, .station-select { z-index: 1; }
+.station-card-copy { padding: 16px; display: flex; flex-direction: column; flex: 1; }
+.station-badges { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.output-badge { padding: 5px 7px; border-radius: 999px; font-size: 8px; font-weight: 900; letter-spacing: .04em; background: #eaf7f2; color: #117458; white-space: nowrap; }
+.output-badge.dc { background: #eef3ff; color: #425db5; }
+.station-usecase { min-height: 44px; }
+
+/* Caractéristiques */
+.specs-hero {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 30px;
+  align-items: end;
+  padding: 52px 0 34px;
+}
+.specs-hero h1 { margin: 12px 0 16px; font-size: clamp(38px,5vw,66px); line-height: 1; letter-spacing: -.05em; max-width: 920px; }
+.specs-hero p { margin: 0; max-width: 780px; color: var(--muted); font-size: 17px; line-height: 1.6; }
+.specs-to-simulator { white-space: nowrap; }
+
+.spec-cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+.spec-model-card {
+  display: grid;
+  grid-template-columns: 42% minmax(0,1fr);
+  min-height: 410px;
+  overflow: hidden;
+  border: 1px solid #d8e3e8;
+  border-radius: 24px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 14px 42px rgba(13,40,61,.07);
+}
+.spec-model-card.dc-model { border-color: #d9e0f3; }
+.spec-model-media { display: grid; place-items: center; min-height: 100%; padding: 30px 20px; background: linear-gradient(150deg,#f7fafb,#edf2f5); }
+.spec-model-media img { width: 100%; height: 240px; object-fit: contain; filter: drop-shadow(0 18px 22px rgba(7,25,35,.13)); }
+.spec-model-copy { padding: 26px 24px; display: flex; flex-direction: column; }
+.spec-model-top { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
+.spec-model-top h2 { margin: 7px 0 0; font-size: 28px; letter-spacing: -.04em; }
+.spec-type { display: inline-flex; padding: 6px 8px; border-radius: 999px; background: #eaf7f2; color: #117458; font-size: 9px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.spec-type.dc { background: #eef3ff; color: #425db5; }
+.official-name { margin: 6px 0 0; font-size: 10px; color: #7a8d97; }
+.spec-usecase { margin: 12px 0 17px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.spec-key-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+.spec-key-grid > div { padding: 10px; border-radius: 12px; background: #f5f8fa; }
+.spec-key-grid span { display: block; color: #70838e; font-size: 9px; text-transform: uppercase; letter-spacing: .07em; }
+.spec-key-grid strong { display: block; margin-top: 3px; font-size: 15px; }
+.spec-detail-list { display: grid; gap: 7px; margin-top: 15px; }
+.spec-detail-list > div { display: grid; grid-template-columns: 82px 1fr; gap: 10px; align-items: start; padding-top: 7px; border-top: 1px solid #edf1f3; }
+.spec-detail-list span { color: #71838d; font-size: 10px; }
+.spec-detail-list b { color: #17303c; font-size: 11px; font-weight: 750; line-height: 1.45; }
+.spec-note { margin-top: 14px; padding: 10px 11px; border-radius: 11px; background: #f4f7f9; color: #536a78; font-size: 10px; line-height: 1.5; }
+.spec-sim-btn { margin-top: auto; align-self: flex-start; }
+
+.comparison-section, .panel-guide { margin-top: 30px; padding: 26px; border-radius: 24px; background: rgba(255,255,255,.92); border: 1px solid #d8e3e8; box-shadow: 0 12px 36px rgba(13,40,61,.055); }
+.specs-heading { margin-bottom: 20px; }
+.comparison-scroll { overflow-x: auto; border: 1px solid #e0e7eb; border-radius: 16px; background: white; }
+.comparison-table { width: 100%; min-width: 900px; border-collapse: collapse; table-layout: fixed; }
+.comparison-table th, .comparison-table td { padding: 13px 14px; border-bottom: 1px solid #e8edef; border-right: 1px solid #edf1f3; text-align: left; vertical-align: middle; font-size: 11px; line-height: 1.4; }
+.comparison-table th:last-child, .comparison-table td:last-child { border-right: 0; }
+.comparison-table tbody tr:last-child th, .comparison-table tbody tr:last-child td { border-bottom: 0; }
+.comparison-table thead th { background: #f7f9fa; font-size: 12px; }
+.comparison-table thead th:first-child { width: 160px; color: #657985; }
+.comparison-table thead th img { width: 60px; height: 52px; object-fit: contain; display: block; margin-bottom: 5px; }
+.comparison-table thead th span { display: block; color: #153247; font-weight: 900; }
+.comparison-table tbody th { background: #fafbfc; color: #607581; font-weight: 800; width: 160px; }
+
+.panel-compatibility { border: 1px solid #e0e7eb; border-radius: 16px; overflow: hidden; background: white; }
+.panel-grid-head, .panel-grid-row { display: grid; grid-template-columns: 150px repeat(4,minmax(125px,1fr)); align-items: center; }
+.panel-grid-head { background: #f6f9fa; color: #17303c; font-size: 10px; font-weight: 850; }
+.panel-grid-head > *, .panel-grid-row > * { padding: 12px 13px; border-right: 1px solid #edf1f3; }
+.panel-grid-head > *:last-child, .panel-grid-row > *:last-child { border-right: 0; }
+.panel-grid-row { border-top: 1px solid #edf1f3; }
+.panel-grid-row > div strong { display: block; font-size: 12px; }
+.panel-grid-row > div small { display: block; margin-top: 2px; color: #71838d; font-size: 10px; }
+.panel-status { font-size: 10px; font-weight: 850; }
+.panel-status.yes { color: #117458; }
+.panel-status.no { color: #9caab1; }
+
+.form-grid select { border: 1px solid #d6dfe2; border-radius: 10px; background: white; padding: 10px; color: var(--ink); text-transform: none; letter-spacing: normal; min-height: 42px; }
+
+@media (max-width: 1180px) {
+  .station-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .spec-model-card { grid-template-columns: 36% minmax(0,1fr); }
+  .spec-model-media img { height: 210px; }
+}
+
+@media (max-width: 900px) {
+  .site-header { align-items: center; }
+  .specs-hero { grid-template-columns: 1fr; align-items: start; }
+  .specs-to-simulator { justify-self: start; }
+  .spec-cards { grid-template-columns: 1fr; }
+  .spec-model-card { grid-template-columns: 34% minmax(0,1fr); min-height: 360px; }
+  .panel-compatibility { overflow-x: auto; }
+  .panel-grid-head, .panel-grid-row { min-width: 820px; }
+}
+
+@media (max-width: 760px) {
+  .site-header { flex-direction: column; align-items: stretch; gap: 11px; }
+  .brand { justify-content: center; }
+  .main-nav { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+  .main-nav-btn { width: 100%; font-size: 12px; }
+  .station-grid { grid-template-columns: 1fr; }
+  .station-card { grid-template-columns: 128px minmax(0,1fr); min-height: 0; }
+  .station-media { min-height: 178px; height: 100%; border-bottom: 0; border-right: 1px solid #e7edf1; }
+  .station-media img { height: 145px; }
+  .station-card-copy { padding: 16px 14px; }
+  .station-usecase { min-height: 0; }
+  .station-badges { justify-content: flex-start; }
+  .specs-hero { padding: 32px 3px 24px; }
+  .specs-hero h1 { font-size: 42px; }
+  .specs-hero p { font-size: 15px; }
+  .spec-model-card { grid-template-columns: 1fr; }
+  .spec-model-media { min-height: 220px; padding: 18px; }
+  .spec-model-media img { height: 190px; }
+  .spec-model-copy { padding: 20px 18px; }
+  .comparison-section, .panel-guide { padding: 18px 14px; border-radius: 19px; }
+}
+
+@media (max-width: 430px) {
+  .main-nav-btn { padding: 9px 8px; }
+  .station-card { grid-template-columns: 112px minmax(0,1fr); }
+  .station-media img { height: 130px; }
+  .station-badges { gap: 3px; }
+  .output-badge { font-size: 7px; }
+  .specs-hero h1 { font-size: 37px; }
+  .spec-key-grid { grid-template-columns: 1fr 1fr; }
+  .spec-detail-list > div { grid-template-columns: 72px 1fr; }
+}
+
+/* Indication de la connectique des appareils, utile pour la C300 DC */
+.appliance-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.appliance-card-top .appliance-icon { margin-bottom: 10px; }
+.supply-badge { display: inline-flex; align-items: center; padding: 5px 6px; border-radius: 999px; font-size: 8px; line-height: 1; font-weight: 900; white-space: nowrap; background: #eef3f6; color: #607581; }
+.supply-badge.dc { background: #eef3ff; color: #425db5; }
+.supply-badge.ac { background: #edf7f4; color: #147158; }
+.supply-badge.bad { background: #fff0f0; color: #aa3434; }
+.appliance-card.interface-incompatible { border-style: dashed; background: #fffafa; }
+.appliance-card.interface-incompatible .appliance-add { color: #a84545; }
+
+/* 5 modes possibles avec la C300 DC (dont USB-C) */
+.charge-methods { grid-template-columns: repeat(auto-fit,minmax(145px,1fr)); }
+
+/* =========================================================
+   V1.5 — Mode borne / application installable
+   ========================================================= */
+.run-mode-kiosk,
+.run-mode-app { overscroll-behavior: none; }
+
+.mode-controls {
+  position: fixed;
+  z-index: 1200;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid rgba(7,25,35,.11);
+  border-radius: 16px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 12px 36px rgba(7,25,35,.16);
+  backdrop-filter: blur(14px);
+}
+.mode-label {
+  padding: 0 8px 0 6px;
+  color: #607581;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.mode-control-btn {
+  min-height: 40px;
+  border: 0;
+  border-radius: 11px;
+  background: #eef3f6;
+  color: #17313d;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: transform .16s ease, background .16s ease;
+}
+.mode-control-btn:hover { background: #e1eaf0; transform: translateY(-1px); }
+.mode-control-btn.install-btn { background: #155a9c; color: #fff; }
+.mode-control-btn.hidden { display: none; }
+
+.idle-warning {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4,18,25,.72);
+  backdrop-filter: blur(8px);
+}
+.idle-warning.hidden { display: none; }
+.idle-warning-card {
+  width: min(440px, 100%);
+  padding: 34px;
+  border-radius: 26px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,.28);
+}
+.idle-warning-icon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: #eef5fb;
+  color: #155a9c;
+  font-size: 34px;
+  font-weight: 800;
+}
+.idle-warning-card h2 { margin: 0 0 10px; font-size: clamp(24px,4vw,32px); }
+.idle-warning-card p { margin: 0 auto 18px; max-width: 34ch; color: #607581; line-height: 1.55; }
+.idle-warning-card > strong { display: block; margin-bottom: 20px; color: #df0b24; font-size: 30px; }
+.idle-warning-card .btn { min-width: 180px; }
+
+.mode-toast {
+  position: fixed;
+  z-index: 2200;
+  left: 50%;
+  bottom: 86px;
+  transform: translate(-50%, 16px);
+  padding: 11px 16px;
+  border-radius: 999px;
+  background: #071923;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.mode-toast.show { opacity: 1; transform: translate(-50%,0); }
+
+@media (display-mode: fullscreen), (display-mode: standalone) {
+  .run-mode-app .mode-controls { bottom: max(18px, env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 760px) {
+  .run-mode-kiosk .shell,
+  .run-mode-app .shell { padding-bottom: 96px; }
+  .mode-controls {
+    left: 12px;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    justify-content: center;
+  }
+  .mode-label { display: none; }
+  .mode-control-btn { flex: 1 1 0; padding-inline: 8px; }
+  .mode-control-btn span { font-size: 12px; }
+}
+
+@media (max-width: 410px) {
+  .mode-control-btn span { display: none; }
+  .mode-control-btn { font-size: 20px; }
+}

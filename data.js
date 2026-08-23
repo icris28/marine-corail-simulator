@@ -20,20 +20,66 @@ window.SOLIX_DATA = {
       capacityWh: 288,
       image: "assets/images/anker-solix-c300.webp",
       useCase: "Bivouac, électronique légère et petites recharges",
+      outputType: "ac-dc",
+      outputTypeLabel: "CA + CC",
       continuousW: 300,
       peakW: 600,
       motorStartupLimitW: 300,
       peakLabel: "600 W via SurgePad",
       chemistry: "LFP",
       extension: null,
-      solar: { maxW: 100, minV: 11, maxV: 28, lowVoltageCurrentA: 8.2, highVoltageCurrentA: null },
+      solar: { maxW: 100, minV: 11, maxV: 28, lowVoltageCurrentA: 8.2, highVoltageCurrentA: null, allowedPanelIds: ["ps60", "ps100"] },
       recharge: {
         ac: { supported: true, fullMinutesEstimate: 70, manufacturerNote: "80 % en 50 min sur secteur" },
+        usbC: { supported: true, inputW: 140, efficiency: 0.88, manufacturerNote: "Recharge USB-C PD 140 W compatible" },
         alternator: { supported: false },
         car: { supported: true, inputW: 100, efficiency: 0.82, manufacturerNote: "Recharge véhicule compatible" }
       },
+      specs: {
+        dimensions: "164 × 161 × 240 mm",
+        weight: "4,13 kg",
+        outputs: "230 V + USB-C 140 W + USB-A + 12 V",
+        ups: "10 ms",
+        solarInput: "100 W max • 11–28 V",
+        rechargeHeadline: "80 % en 50 min sur secteur",
+        warranty: "5 ans"
+      },
       tags: ["ultra-compacte", "camping léger"],
       note: "Pour les moteurs et compresseurs, la limite de démarrage est volontairement traitée de façon conservatrice."
+    },
+    {
+      id: "c300-dc",
+      name: "Anker SOLIX C300 DC",
+      shortName: "C300 DC",
+      capacityWh: 288,
+      image: "assets/images/anker-solix-c300-dc.webp",
+      useCase: "Ultra-portable pour USB-C, 12 V et équipements basse tension",
+      outputType: "dc-only",
+      outputTypeLabel: "CC uniquement",
+      continuousW: 300,
+      peakW: 300,
+      motorStartupLimitW: 300,
+      peakLabel: "300 W de sortie CC totale",
+      chemistry: "LFP",
+      extension: null,
+      solar: { maxW: 100, minV: 11, maxV: 28, lowVoltageCurrentA: 8.2, highVoltageCurrentA: null, allowedPanelIds: ["ps60", "ps100"] },
+      recharge: {
+        ac: { supported: false },
+        usbC: { supported: true, inputW: 280, efficiency: 0.88, fullMinutesEstimate: 90, manufacturerNote: "100 % en 90 min avec deux entrées USB-C PD 140 W" },
+        alternator: { supported: false },
+        car: { supported: true, inputW: 100, efficiency: 0.82, manufacturerNote: "Recharge véhicule compatible" }
+      },
+      specs: {
+        dimensions: "124 × 120 × 200 mm",
+        weight: "2,8 kg",
+        outputs: "CC uniquement • 2 × USB-C bidirectionnels 140 W + USB-A + 12 V",
+        ups: "—",
+        solarInput: "100 W max • 11–28 V",
+        rechargeHeadline: "100 % en 90 min via double USB-C PD",
+        warranty: "3 ans"
+      },
+      tags: ["2,8 kg", "USB-C", "CC uniquement"],
+      note: "Pas de sortie 230 V : les appareils nécessitant une prise secteur sont signalés comme incompatibles."
     },
     {
       id: "c1000-gen2",
@@ -42,6 +88,8 @@ window.SOLIX_DATA = {
       capacityWh: 1024,
       image: "assets/images/anker-solix-c1000-gen2.webp",
       useCase: "Camping, froid, Starlink et appareils du quotidien",
+      outputType: "ac-dc",
+      outputTypeLabel: "CA + CC",
       continuousW: 2000,
       peakW: 3000,
       motorStartupLimitW: 3000,
@@ -51,8 +99,18 @@ window.SOLIX_DATA = {
       solar: { maxW: 600, minV: 11, maxV: 60, lowVoltageCurrentA: 8.2, highVoltageCurrentA: 14.5, splitV: 28 },
       recharge: {
         ac: { supported: true, fullMinutesEstimate: 49, manufacturerNote: "0 à 100 % en 49 min en mode UltraFast" },
+        usbC: { supported: false },
         alternator: { supported: true, inputW: 800, efficiency: 0.84, manufacturerNote: "Compatible chargeur alternateur Anker SOLIX" },
         car: { supported: true, inputW: 120, efficiency: 0.82, manufacturerNote: "Prise véhicule 12 V / 120 W max." }
+      },
+      specs: {
+        dimensions: "384 × 208 × 244 mm",
+        weight: "11,3 kg",
+        outputs: "230 V + USB-C 140 W + USB-A + 12 V",
+        ups: "10 ms",
+        solarInput: "600 W max • 11–60 V",
+        rechargeHeadline: "100 % en 49 min en UltraFast",
+        warranty: "—"
       },
       tags: ["polyvalente", "camping", "secours"]
     },
@@ -63,22 +121,33 @@ window.SOLIX_DATA = {
       capacityWh: 2048,
       image: "assets/images/anker-solix-c2000-gen2.webp",
       useCase: "Forte autonomie, usages exigeants et alimentation de secours",
+      outputType: "ac-dc",
+      outputTypeLabel: "CA + CC",
       continuousW: 2400,
       peakW: 4000,
       motorStartupLimitW: 4000,
       peakLabel: "4 000 W en pic",
       chemistry: "LFP",
-      extension: { id: "bp2000-gen2", name: "BP2000 Gen 2", extraWh: 2048, maxQty: 1 },
+      extension: { id: "bp2000-gen2", name: "Anker SOLIX BP2000 Gen 2", extraWh: 2048, maxQty: 1 },
       solar: { maxW: 800, minV: 11, maxV: 60, lowVoltageCurrentA: 8.2, highVoltageCurrentA: 17, splitV: 28 },
       recharge: {
         ac: { supported: true, fullMinutesEstimate: 63, manufacturerNote: "0 à 100 % en 1 h 03" },
+        usbC: { supported: false },
         alternator: { supported: true, inputW: 800, efficiency: 0.98, manufacturerNote: "0 à 100 % en 2 h 36 avec chargeur alternateur 800 W" },
         car: { supported: true, inputW: 100, efficiency: 0.88, manufacturerNote: "Recharge sur prise véhicule" }
+      },
+      specs: {
+        dimensions: "459 × 250 × 257 mm",
+        weight: "18,9 kg",
+        outputs: "230 V + 2 × USB-C 140 W + USB-C 15 W + USB-A + 12 V",
+        ups: "10 ms",
+        solarInput: "800 W max • 11–60 V",
+        rechargeHeadline: "100 % en 1 h 03 sur secteur",
+        warranty: "5 ans"
       },
       tags: ["2 kWh", "forte puissance", "extensible"]
     }
   ],
-
   panels: [
     { id: "ps60", name: "Anker SOLIX PS60", watts: 60, vmp: 16, voc: 18, imp: 3.75, isc: null, c300Allowed: true },
     { id: "ps100", name: "Anker SOLIX PS100", watts: 100, vmp: 21.6, voc: 27, imp: 4.63, isc: null, c300Allowed: true },
