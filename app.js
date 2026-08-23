@@ -671,9 +671,9 @@
   }
 
   function bindNavigation() {
-    $('[data-next]').forEach(b => b.addEventListener('click', () => setStep(state.step + 1)));
-    $('[data-prev]').forEach(b => b.addEventListener('click', () => setStep(state.step - 1)));
-    $('[data-step-target]').forEach(b => b.addEventListener('click', () => setStep(b.dataset.stepTarget)));
+    $$('[data-next]').forEach(b => b.addEventListener('click', () => setStep(state.step + 1)));
+    $$('[data-prev]').forEach(b => b.addEventListener('click', () => setStep(state.step - 1)));
+    $$('[data-step-target]').forEach(b => b.addEventListener('click', () => setStep(b.dataset.stepTarget)));
     $("#restartBtn").addEventListener("click", () => resetSimulation());
   }
 

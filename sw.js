@@ -1,13 +1,13 @@
-const CACHE_NAME = "mc-solix-v15-20260824";
+const CACHE_NAME = "mc-solix-v151-20260824";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./kiosk.html",
   "./app.html",
-  "./styles.css",
-  "./data.js",
-  "./app.js",
-  "./shell-mode.js",
+  "./styles.css?v=151",
+  "./data.js?v=151",
+  "./app.js?v=151",
+  "./shell-mode.js?v=151",
   "./manifest.webmanifest",
   "./assets/images/logo-marine-corail-energies.png",
   "./assets/images/anker-solix-c300.webp",
@@ -20,7 +20,11 @@ const APP_SHELL = [
 ];
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("activate", event => {
@@ -36,16 +40,16 @@ self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Network first when online, cache fallback when offline.
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      const network = fetch(event.request).then(response => {
+    fetch(event.request)
+      .then(response => {
         if (response && response.status === 200) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         }
         return response;
-      }).catch(() => cached);
-      return cached || network;
-    })
+      })
+      .catch(() => caches.match(event.request).then(cached => cached || caches.match("./index.html")))
   );
 });

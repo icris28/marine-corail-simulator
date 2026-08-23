@@ -1,4 +1,4 @@
-# Marine Corail Énergies — Simulateur Anker SOLIX V1.5
+# Marine Corail Énergies — Simulateur Anker SOLIX V1.5.1
 
 Application statique HTML/CSS/JavaScript conçue pour GitHub Pages. Elle reste indépendante de WordPress et WooCommerce.
 
@@ -111,3 +111,8 @@ SOURCES.md                  sources techniques
 Pour publier une nouvelle version : remplacer les fichiers du dépôt puis faire `Commit changes`. GitHub Pages republie automatiquement.
 
 Le service worker utilise un nom de cache versionné. Lors d'une future mise à jour importante, augmenter `CACHE_NAME` dans `sw.js` afin de forcer le renouvellement du cache hors ligne.
+
+
+## Correctif V1.5.1
+- Correction du raccordement des boutons de navigation.
+- Mise a jour du cache PWA en mode network-first pour eviter de conserver une ancienne version apres un deploiement GitHub Pages.
