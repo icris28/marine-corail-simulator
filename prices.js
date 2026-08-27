@@ -11,13 +11,13 @@ window.SOLIX_PRICES = {
   currencyLabel: "F CFP TTC",
   priceUpdated: "2026-08-28",
   items: {
-    "c300": null,
-    "c300-dc": null,
-    "c1000-gen2": null,
-    "c2000-gen2": null,
-    "bp2000-gen2": null,
-    "ps60": null,
-    "ps200": null,
-    "alternator-charger": null
+    "c300": 49900,
+    "c300-dc": 39900,
+    "c1000-gen2": 129900,
+    "c2000-gen2": 199995,
+    "bp2000-gen2": 149995,
+    "ps60": 29900,
+    "ps200": 64900,
+    "alternator-charger": 54900
   }
 };
