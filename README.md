@@ -1,3 +1,7 @@
+## V1.6.1
+
+Ajout des mentions prix indicatifs / non contractuels dans la page Caractéristiques et le pied de page.
+
 # Marine Corail Énergies — Simulateur Anker SOLIX V1.5.1
 
 Application statique HTML/CSS/JavaScript conçue pour GitHub Pages. Elle reste indépendante de WordPress et WooCommerce.
@@ -116,3 +120,17 @@ Le service worker utilise un nom de cache versionné. Lors d'une future mise à 
 ## Correctif V1.5.1
 - Correction du raccordement des boutons de navigation.
 - Mise a jour du cache PWA en mode network-first pour eviter de conserver une ancienne version apres un deploiement GitHub Pages.
+
+## V1.6 — Prix modifiables
+
+Les prix affichés dans l’onglet **Caractéristiques** sont lus depuis `prices.js`.
+
+Exemple :
+
+```js
+"c1000-gen2": 149900,
+"ps200": 69900,
+```
+
+Saisir uniquement un nombre en F CFP TTC, sans espaces ni symbole monétaire. Mettre `null` pour afficher « À renseigner ».
+Après modification sur GitHub, faire un commit puis recharger la page. La version 1.6 utilise des fichiers versionnés afin de limiter les problèmes de cache.

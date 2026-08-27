@@ -1,13 +1,14 @@
-const CACHE_NAME = "mc-solix-v151-20260824";
+const CACHE_NAME = "mc-solix-v160-20260828";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./kiosk.html",
   "./app.html",
-  "./styles.css?v=151",
-  "./data.js?v=151",
-  "./app.js?v=151",
-  "./shell-mode.js?v=151",
+  "./styles.css?v=160",
+  "./data.js?v=160",
+  "./prices.js?v=160",
+  "./app.js?v=160",
+  "./shell-mode.js?v=160",
   "./manifest.webmanifest",
   "./assets/images/logo-marine-corail-energies.png",
   "./assets/images/anker-solix-c300.webp",

@@ -2,6 +2,7 @@
   "use strict";
 
   const D = window.SOLIX_DATA;
+  const PRICE_DATA = window.SOLIX_PRICES || { currencyLabel: "F CFP TTC", priceUpdated: "", items: {} };
   const state = {
     view: location.hash === "#caracteristiques" ? "specs" : "simulator",
     step: 1,
@@ -20,6 +21,12 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const fmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+  const priceFmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+  const getPrice = id => PRICE_DATA.items ? PRICE_DATA.items[id] : null;
+  const formatPrice = id => {
+    const value = getPrice(id);
+    return Number.isFinite(value) && value > 0 ? `${priceFmt.format(value)} ${PRICE_DATA.currencyLabel || "F CFP TTC"}` : "À renseigner";
+  };
 
   const getStation = (id = state.stationId) => D.stations.find(s => s.id === id);
   const getPanel = (id = state.solarPanelId) => D.panels.find(p => p.id === id);
@@ -567,6 +574,7 @@
         <div class="spec-model-copy">
           <div class="spec-model-top"><div><span class="spec-type ${s.outputType === "dc-only" ? "dc" : ""}">${s.outputTypeLabel}</span><h2>${s.shortName}</h2></div><span class="chemistry-badge">${s.chemistry}</span></div>
           <p class="spec-usecase">${s.useCase}</p>
+          <div class="spec-price-row"><span>Prix Marine Corail</span><strong class="${Number.isFinite(getPrice(s.id)) && getPrice(s.id) > 0 ? '' : 'price-empty'}">${formatPrice(s.id)}</strong></div>
           <div class="spec-key-grid">
             <div><span>Capacité</span><strong>${fmt.format(s.capacityWh)} Wh</strong></div>
             <div><span>${s.outputType === "dc-only" ? "Sortie totale" : "Puissance"}</span><strong>${fmt.format(s.continuousW)} W</strong></div>
@@ -585,6 +593,7 @@
       </article>`).join("");
 
     const rows = [
+      ["Prix TTC", s => formatPrice(s.id)],
       ["Type", s => s.outputTypeLabel],
       ["Capacité", s => `${fmt.format(s.capacityWh)} Wh`],
       ["Puissance", s => `${fmt.format(s.continuousW)} W`],
@@ -597,6 +606,22 @@
       ["Dimensions", s => s.specs.dimensions]
     ];
     table.innerHTML = `<thead><tr><th>Caractéristique</th>${D.stations.map(s => `<th><img src="${s.image}" alt=""><span>${s.shortName}</span></th>`).join("")}</tr></thead><tbody>${rows.map(([label, val]) => `<tr><th>${label}</th>${D.stations.map(s => `<td>${val(s)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+
+    const accessoryCards = $("#accessoryCards");
+    if (accessoryCards) {
+      accessoryCards.innerHTML = (D.accessories || []).map(a => `
+        <article class="accessory-card">
+          <div class="accessory-media"><img src="${a.image}" alt="${a.name}" loading="lazy" referrerpolicy="no-referrer"></div>
+          <div class="accessory-copy">
+            <div class="accessory-top"><div><span class="spec-type">${a.category}</span><h3>${a.name}</h3><small class="product-ref">Réf. ${a.reference}</small></div></div>
+            <p>${a.headline}</p>
+            <div class="spec-price-row accessory-price"><span>Prix Marine Corail</span><strong class="${Number.isFinite(getPrice(a.id)) && getPrice(a.id) > 0 ? '' : 'price-empty'}">${formatPrice(a.id)}</strong></div>
+            <div class="accessory-key-grid">${a.keySpecs.map(([k,v]) => `<div><span>${k}</span><strong>${v}</strong></div>`).join("")}</div>
+            <div class="spec-detail-list">${a.details.map(([k,v]) => `<div><span>${k}</span><b>${v}</b></div>`).join("")}</div>
+            ${a.note ? `<div class="spec-note">${a.note}</div>` : ""}
+          </div>
+        </article>`).join("");
+    }
 
     panelBox.innerHTML = `<div class="panel-grid-head"><span>Panneau</span>${D.stations.map(s => `<b>${s.shortName}</b>`).join("")}</div>${D.panels.map(p => `<div class="panel-grid-row"><div><strong>${p.name.replace("Anker SOLIX ", "")}</strong><small>${p.watts} W</small></div>${D.stations.map(s => { const allowed = compatiblePanelsForStation(s).some(x => x.id === p.id); return `<span class="panel-status ${allowed ? "yes" : "no"}">${allowed ? "✓ Compatible" : "—"}</span>`; }).join("")}</div>`).join("")}`;
 

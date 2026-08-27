@@ -148,6 +148,93 @@ window.SOLIX_DATA = {
       tags: ["2 kWh", "forte puissance", "extensible"]
     }
   ],
+  accessories: [
+    {
+      id: "ps60",
+      category: "Panneau solaire",
+      name: "Anker SOLIX PS60",
+      reference: "A24383A1",
+      image: "https://cdn.shopify.com/s/files/1/0650/2773/5652/files/2438_1000x.png?v=1754454395",
+      headline: "Panneau solaire portable 60 W",
+      keySpecs: [
+        ["Puissance", "60 W"],
+        ["Sortie PV", "16 V ⎓ 3,75 A"],
+        ["Protection", "IP68"],
+        ["Poids", "1,77 kg"]
+      ],
+      details: [
+        ["Dimensions plié", "232 × 266 × env. 35–64 mm"],
+        ["Dimensions déplié", "1 033 × 551 × 17 mm"],
+        ["Connectique", "MC4 • stations avec entrée 11–60 V"],
+        ["Usage", "Très compact, randonnée, bivouac et recharge légère"]
+      ],
+      note: "Le PS60 est utilisable dans le simulateur solaire ; la puissance réelle dépend fortement de l’ensoleillement et de l’orientation."
+    },
+    {
+      id: "ps200",
+      category: "Panneau solaire",
+      name: "Anker SOLIX PS200",
+      reference: "AS320011",
+      image: "https://cdn.shopify.com/s/files/1/0650/2773/5652/files/AS320_EU_1000x.png?v=1768204682",
+      headline: "Panneau solaire portable bifacial 200 W",
+      keySpecs: [
+        ["Puissance", "200 W"],
+        ["Sortie PV", "48 V ⎓ 4,16 A"],
+        ["Protection", "IP68"],
+        ["Poids", "4,8 kg"]
+      ],
+      details: [
+        ["Dimensions plié", "68,5 × 79,2 × 4,5 cm"],
+        ["Dimensions déplié", "137,7 × 79,2 × 1,7 cm"],
+        ["Cellules", "Type N • rendement > 25 %"],
+        ["Particularité", "Bifacial • jusqu’à 10 % de production additionnelle selon environnement"]
+      ],
+      note: "La compatibilité dépend de la fenêtre MPPT de la station et du montage ; le simulateur vérifie tension, courant et puissance."
+    },
+    {
+      id: "bp2000-gen2",
+      category: "Batterie additionnelle",
+      name: "Anker SOLIX BP2000 Expansion Battery (Gen 2)",
+      reference: "BP2000 Gen 2",
+      image: "https://cdn.shopify.com/s/files/1/0871/5465/5556/files/A1783-US_ca85885c-6d58-44dd-b563-b87862b4efa1_3840x.png?v=1772002472",
+      headline: "Batterie additionnelle dédiée à la C2000 Gen 2",
+      keySpecs: [
+        ["Capacité", "2 048 Wh"],
+        ["Technologie", "LFP"],
+        ["Cycles", "4 000 cycles à 80 %"],
+        ["Poids", "15,3 kg"]
+      ],
+      details: [
+        ["Compatibilité", "Anker SOLIX C2000 Gen 2 uniquement"],
+        ["Capacité totale", "4 096 Wh avec une C2000 Gen 2"],
+        ["Durée de vie annoncée", "Jusqu’à 10 ans"],
+        ["Garantie", "5 ans"]
+      ],
+      note: "Une BP2000 Gen 2 double la capacité énergétique de la C2000 Gen 2 ; elle est intégrée comme option dans le simulateur."
+    },
+    {
+      id: "alternator-charger",
+      category: "Recharge véhicule",
+      name: "Chargeur d’alternateur Anker SOLIX",
+      reference: "AS2002A1",
+      image: "https://cdn.shopify.com/s/files/1/0650/2773/5652/files/AS200_1000x.png?v=1772002872",
+      headline: "Recharge alternateur jusqu’à 800 W",
+      keySpecs: [
+        ["Puissance", "800 W max"],
+        ["Recharge 2 kWh", "≈ 2,6 h"],
+        ["Pilotage", "Bluetooth / Wi-Fi"],
+        ["Fusible fourni", "100 A"]
+      ],
+      details: [
+        ["Vitesse", "Jusqu’à 8× plus rapide qu’une prise allume-cigare"],
+        ["Modes", "Recharge station • extension camping-car • recharge batterie véhicule"],
+        ["Véhicules", "Compatible avec la grande majorité des camping-cars et véhicules thermiques"],
+        ["Kit", "Câbles vers station et batterie, fil fusible 100 A, visserie et documentation"]
+      ],
+      note: "La puissance réellement disponible dépend du véhicule, de l’alternateur, de l’état de charge et du câblage."
+    }
+  ],
+
   panels: [
     { id: "ps60", name: "Anker SOLIX PS60", watts: 60, vmp: 16, voc: 18, imp: 3.75, isc: null, c300Allowed: true },
     { id: "ps100", name: "Anker SOLIX PS100", watts: 100, vmp: 21.6, voc: 27, imp: 4.63, isc: null, c300Allowed: true },

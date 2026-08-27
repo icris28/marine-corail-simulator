@@ -758,8 +758,8 @@ body {
   margin-top: 18px;
   padding: 20px 22px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
   border: 1px solid #d9e3e9;
   border-radius: 18px;
   background: rgba(255,255,255,.72);
@@ -1113,4 +1113,58 @@ body {
 @media (max-width: 410px) {
   .mode-control-btn span { display: none; }
   .mode-control-btn { font-size: 20px; }
+}
+
+/* v1.6 — prices & accessories */
+.spec-price-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:2px 0 15px; padding:12px 14px; border:1px solid #d8e4ea; background:#fff; border-radius:13px; }
+.spec-price-row span { color:#657b87; font-size:11px; font-weight:700; }
+.spec-price-row strong { color:#0b5aa6; font-size:18px; letter-spacing:-.02em; text-align:right; }
+.spec-price-row .price-empty { color:#8798a2; font-size:13px; font-weight:700; }
+.accessory-guide { margin-top:34px; }
+.accessory-cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.accessory-card { display:grid; grid-template-columns:40% minmax(0,1fr); overflow:hidden; border:1px solid var(--line); border-radius:22px; background:#fff; box-shadow:0 10px 32px rgba(7,25,35,.055); }
+.accessory-media { display:grid; place-items:center; min-height:330px; padding:22px; background:linear-gradient(150deg,#f7fafb,#edf2f5); }
+.accessory-media img { width:100%; max-height:245px; object-fit:contain; filter:drop-shadow(0 15px 22px rgba(7,25,35,.12)); }
+.accessory-copy { padding:24px 22px; }
+.accessory-top h3 { margin:7px 0 3px; font-size:22px; line-height:1.05; letter-spacing:-.035em; }
+.product-ref { color:#738692; font-size:10px; font-weight:700; }
+.accessory-copy > p { margin:12px 0 14px; color:var(--muted); font-size:13px; line-height:1.5; }
+.accessory-key-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+.accessory-key-grid > div { padding:10px; border-radius:12px; background:#f5f8fa; }
+.accessory-key-grid span { display:block; color:#70838e; font-size:9px; text-transform:uppercase; letter-spacing:.07em; }
+.accessory-key-grid strong { display:block; margin-top:3px; font-size:14px; line-height:1.25; }
+.accessory-price { margin-bottom:12px; }
+@media (max-width:1100px) { .accessory-cards { grid-template-columns:1fr; } .accessory-card { grid-template-columns:34% minmax(0,1fr); } }
+@media (max-width:680px) { .accessory-card { grid-template-columns:1fr; } .accessory-media { min-height:210px; padding:16px; } .accessory-media img { max-height:190px; } .accessory-copy { padding:19px 17px; } .accessory-key-grid { grid-template-columns:1fr 1fr; } .spec-price-row strong { font-size:16px; } }
+.accessory-media::after { content:"ANKER SOLIX"; position:absolute; color:#9aabb4; font-size:11px; font-weight:900; letter-spacing:.12em; z-index:0; }
+.accessory-media { position:relative; }
+.accessory-media img { position:relative; z-index:1; }
+
+
+/* V1.6.1 — mentions prix */
+.price-disclaimer {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border: 1px solid #d9e3e9;
+  border-radius: 14px;
+  background: rgba(255,255,255,.74);
+  color: #536a78;
+}
+.price-disclaimer strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #17303c;
+  font-size: 12px;
+}
+.price-disclaimer p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.55;
+}
+@media (max-width: 1100px) {
+  .simulator-footer { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .price-disclaimer strong { font-size: 13px; }
+  .price-disclaimer p { font-size: 12px; }
 }

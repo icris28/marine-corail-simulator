@@ -70,3 +70,10 @@ Le logo `logo-marine-corail-energies.png` a été fourni directement par Marine 
 ## V1.5 — fonctionnement borne / PWA
 
 Les fonctions borne et application n'ajoutent aucune donnée technique produit. Elles utilisent uniquement les API web standards du navigateur : Web App Manifest, Service Worker, Fullscreen API et Screen Wake Lock lorsque disponibles. Les navigateurs peuvent limiter certaines fonctions selon la plateforme et les permissions.
+
+## V1.6 — Accessoires ajoutés
+
+- Anker SOLIX PS200 (AS320011): 200 W, 48 V / 4,16 A, 4,8 kg, IP68, dimensions plié/déplié — fiche officielle Anker SOLIX FR.
+- Anker SOLIX PS60 (A24383A1): 60 W, 16 V / 3,75 A, IP68, compatible entrées MC4 11–60 V — fiche officielle Anker SOLIX FR ; dimensions et poids recoupés avec le manuel PS60.
+- Anker SOLIX BP2000 Expansion Battery (Gen 2): 2 048 Wh, LFP, 4 000 cycles, 15,3 kg, 5 ans, dédiée à la C2000 Gen 2 — fiche officielle Anker SOLIX EU.
+- Chargeur d’alternateur Anker SOLIX (AS2002A1): jusqu’à 800 W, station 2 kWh en environ 2,6 h, pilotage Bluetooth/Wi-Fi, fusible 100 A fourni — fiche officielle Anker SOLIX FR.

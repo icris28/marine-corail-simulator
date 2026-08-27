@@ -11,7 +11,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
   <title>Anker SOLIX — Simulateur & caractéristiques | Marine Corail Énergies</title>
-  <link rel="stylesheet" href="styles.css?v=151" />
+  <link rel="stylesheet" href="styles.css?v=161" />
 </head>
 <body>
   <div class="ambient ambient-a"></div>
@@ -185,6 +185,18 @@
 
       <div id="specCards" class="spec-cards"></div>
 
+      <section class="accessory-guide">
+        <div class="section-heading specs-heading">
+          <div><span class="section-kicker">ACCESSOIRES & RECHARGE</span><h2>Panneaux, extension et chargeur alternateur</h2></div>
+          <p>Les prix sont lus depuis <code>prices.js</code> afin de pouvoir être modifiés sans toucher au reste de l’application.</p>
+        </div>
+        <div id="accessoryCards" class="accessory-cards"></div>
+      <div class="price-disclaimer">
+        <strong>Prix indicatifs</strong>
+        <p>Les prix affichés sur cette page sont donnés à titre indicatif et n’ont pas de valeur contractuelle. Ils peuvent être modifiés à tout moment. Seuls les prix affichés en magasin par Marine Corail font foi.</p>
+      </div>
+      </section>
+
       <section class="comparison-section">
         <div class="section-heading specs-heading">
           <div><span class="section-kicker">COMPARATIF</span><h2>Les différences essentielles</h2></div>
@@ -206,6 +218,10 @@
       <div>
         <strong>À propos des estimations</strong>
         <p>Les résultats sont indicatifs et non contractuels. L’autonomie et les temps de recharge réels varient selon les appareils, leur état, la température, le rendement des chargeurs, l’ensoleillement et les conditions d’utilisation.</p>
+      </div>
+      <div>
+        <strong>À propos des prix</strong>
+        <p>Les prix affichés sur cette page sont donnés à titre indicatif et n’ont pas de valeur contractuelle. Ils peuvent être modifiés à tout moment. Seuls les prix affichés en magasin par Marine Corail font foi.</p>
       </div>
       <div>
         <strong>Données et sécurité</strong>
@@ -230,8 +246,9 @@
     </form>
   </dialog>
 
-  <script src="data.js?v=151"></script>
-  <script src="app.js?v=151"></script>
-  <script src="shell-mode.js?v=151"></script>
+  <script src="data.js?v=161"></script>
+  <script src="prices.js?v=161"></script>
+  <script src="app.js?v=161"></script>
+  <script src="shell-mode.js?v=161"></script>
 </body>
 </html>
